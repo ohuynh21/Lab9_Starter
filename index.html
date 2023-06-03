@@ -2,6 +2,19 @@
 <html lang="en">
 
 <head>
+  <script>
+  // step 5, catching error and logging message to console
+  window.addEventListener('error', function(){
+        console.log("The following error has occurred:")
+      })
+  </script>
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+<script>
+  window.TrackJS && TrackJS.install({ 
+    token: "431510e473cc4c25a2a2fcb5ad003276"
+    // for more configuration options, see https://docs.trackjs.com
+  });
+</script>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -69,25 +82,31 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id = 'c_log'>Console Log</button>
+      <button id = 'c_err'>Console Error</button>
+      <button id= 'c_count'>Console Count</button>
+      <button id= 'c_warn'>Console Warn</button>
+      <button id = 'c_assert'>Console Assert</button>
+      <button id = 'c_clear'>Console Clear</button>
+      <button id = 'c_dir'>Console Dir</button>
+      <button id = 'c_dirxml'>Console dirxml</button>
+      <button id = 'c_groupstart'>Console Group Start</button>
+      <button id = 'c_groupend'>Console Group End</button>
+      <button id = 'c_table'>Console Table</button>
+      <button id = 'c_timerstart'>Start Timer</button>
+      <button id = 'c_timerend'>End Timer</button>
+      <button id = 'c_trace'>Console Trace</button>
+      <button id = 'c_globalerr'>Trigger a Global Error</button>
     </section>
   </main>
 
   <script>
+    class InputError extends Error {
+      constructor(message) {
+        super(message); 
+        this.name = "InputError";
+      }
+    }
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +114,111 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      
+      try{
+        var status = "successfully";
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+        } catch (err){
+          status = "unsuccessfully";
+          throw new InputError("One of the inputs is not a number");
+        } finally{
+            console.log(`Task Performed ${status}`);
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    let c_log = document.getElementById('c_log');
+    c_log.addEventListener('click', function(){
+      console.log('Console Log Demo');
+    });
+    let c_err = document.getElementById('c_err');
+    c_err.addEventListener('click', function(){
+      console.error('Console Error Demo');
+    });
+    let c_warn = document.getElementById('c_warn');
+    c_warn.addEventListener('click', function(){
+      console.warn('Console Warn Demo');
+    });
+    let c_count = document.getElementById('c_count');
+    let count = 0;
+    c_count.addEventListener('click', function(){
+      count += 1;
+      console.log(`Count Button:${count}`);
+    });
+    let c_assert = document.getElementById('c_assert');
+    c_assert.addEventListener('click', function(){
+      console.assert(count === 100, "Button Count should be 100")
+    });
+    let c_clear = document.getElementById('c_clear');
+    c_clear.addEventListener('click', function(){
+      console.clear();
+    });
+    let c_dir = document.getElementById('c_dir');
+    c_dir.addEventListener('click', function(){
+      console.dir(c_dir);
+    });
+    let c_dirxml = document.getElementById('c_dirxml');
+    c_dirxml.addEventListener('click', function(){
+      console.dirxml(c_dirxml);
+    });
+    let c_groupstart = document.getElementById('c_groupstart');
+    c_groupstart.addEventListener('click', function(){
+      console.group('Console Group Start');
+    });
+    let c_groupend = document.getElementById('c_groupend');
+    c_groupend.addEventListener('click', function(){
+      console.groupEnd('Console Group Ended');
+    });
+    var classes = [
+    {name: "Software Engineering", c_name: "CSE110"},
+    {name: "Analysis and Design of Algorithms", c_name: "CSE101"},
+    {name: "Intro to Python", c_name: "CSE6R"}
+    ];
+    let c_table = document.getElementById('c_table');
+    c_table.addEventListener('click', function(){
+      console.table(classes);
+    });
+
+    function deepest() {
+      console.trace();
+    };
+
+    function deeper() {
+      deepest();
+    };
+    function deep() {
+      deeper();
+    };
+
+    function handleBtnClick(){
+      deep();
+    };
+
+    let c_trace = document.getElementById('c_trace');
+    c_trace.addEventListener('click', handleBtnClick);
+
+    let c_timerstart = document.getElementById('c_timerstart');
+    c_timerstart.addEventListener('click', function(){
+      console.time('Timer Button');
+    });
+    let c_timerend = document.getElementById('c_timerend');
+    c_timerend.addEventListener('click', function(){
+      console.timeEnd('Timer Button');
+    });
+
+    let c_globalerr = document.getElementById('c_globalerr');
+    c_globalerr.addEventListener('click', function(){
+      // plug in strings into the calculator and press submit
+      document.querySelector('#first-num').value = "abc";
+      document.querySelector('#second-num').value = "def";
+      let calculate = document.querySelector('#calculate');
+      calculate.click();
+
+    });
+
   </script>
 </body>
 
